@@ -6,17 +6,17 @@ class Amortizacion:
         self.total = dinero * (1 + interes)
     
     def get_capital(self):
-        return self.dinero / self.periodo
+        return int(self.dinero / self.periodo)
     
     def get_intereses(self):
-        return self.get_capital() * self.interes
+        return int(self.get_capital() * self.interes)
     
     def get_saldo(self):
         self.total -= self.get_cuota()
-        return self.total
+        return int(self.total)
     
     def get_cuota(self):
-        return self.get_capital() + self.get_intereses()
+        return int(self.get_capital() + self.get_intereses())
 
 
 Amortizacion = Amortizacion(12000, 9, 0.15)

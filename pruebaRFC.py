@@ -1,3 +1,24 @@
+class Amortizacion:
+    def __init__(self, dinero, periodo, interes):
+        self.dinero = dinero
+        self.periodo = periodo
+        self.interes = interes
+        self.total = dinero * (1 + interes)
+
+   #da el resutado de la columna capital 
+    def get_capital(self):
+        return self.dinero / self.periodo
+    #da el resutado de la columna intereses
+    def get_intereses(self):
+        return self.get_capital() * self.interes
+    #da el resutado de la columna saldo
+    def get_saldo(self):
+        self.total -= self.get_cuota()
+        return self.total
+    #da el resutado de la columna cuota
+    def get_cuota(self):
+        return self.get_capital() + self.get_intereses()
+
 def prueba():
     # Calcula la cuota mensual, interés y capital
     monto = float("1500")

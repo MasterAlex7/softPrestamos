@@ -140,9 +140,9 @@ class prestamos:
     def subir_prestamo(self):
         try:
             if self.validar_datos_prestamo():
-                """ query = "INSERT INTO `prestamo` (`rfc`, `monto`, `plazos`, `intereses`) VALUES (%s, %s, %s,%s)"
+                query = "INSERT INTO `prestamo` (`rfc`, `monto`, `plazos`, `intereses`) VALUES (%s, %s, %s,%s)"
                 parameters = (self.rfcPrestamo.get(),self.monto.get(),self.plazos.get(),self.intereses.get())
-                self.run_query_add(query,parameters) """
+                self.run_query_add(query,parameters)
                 intereses = float(self.intereses.get())/100
                 self.objTabla=Amortizacion(float(self.monto.get()),int(self.plazos.get()),intereses).amortizacionObj()
                 self.print_table()
@@ -166,17 +166,17 @@ class Amortizacion:
         self.total = dinero * (1 + interes)
     
     def get_capital(self):
-        return self.dinero / self.periodo
+        return round(self.dinero / self.periodo, 3)
     
     def get_intereses(self):
-        return self.get_capital() * self.interes
+        return round(self.get_capital() * self.interes,3)
     
     def get_saldo(self):
         self.total -= self.get_cuota()
-        return self.total
+        return round(self.total,2)
     
     def get_cuota(self):
-        return self.get_capital() + self.get_intereses()
+        return round(self.get_capital() + self.get_intereses(),3)
     
     def amortizacionObj(self):
         objeto = []

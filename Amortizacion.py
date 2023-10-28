@@ -19,19 +19,19 @@ class Amortizacion:
         return self.get_capital() + self.get_intereses()
 
 
-Amortizacion = Amortizacion(1000, 10, 0.1)
+Amortizacion = Amortizacion(12000, 9, 0.15)
 
 objeto = []
 
 for mes in range(Amortizacion.periodo):
-   objeto.append(
-    {
-         'Periodo': mes + 1,
-         'Cuota': Amortizacion.get_cuota(),
-         'Intereses': Amortizacion.get_intereses(),
-         'Capital': Amortizacion.get_capital(),
-         'Saldo': Amortizacion.get_saldo()
-    }
-   )
+    objeto.append(
+        {
+            'Periodo': mes + 1,
+            'Cuota': Amortizacion.get_cuota(),
+            'Intereses': Amortizacion.get_intereses(),
+            'Capital': Amortizacion.get_capital(),
+            'Saldo': Amortizacion.get_saldo()
+        }
+    )
 
-print(objetoculero)
+print(objeto)

@@ -13,15 +13,15 @@ class prestamos:
     dbUser = 'root'
     dbPassword = 'Alexelpro27'
     dbName = 'sistemaprestamos'
+    objTabla = []
 
     def __init__(self, window):
         self.wind = window
         self.wind.title('Sistema de Prestamos')
-        self.wind.geometry('800x600')
 
         # Creando un Frame Container
         frame = LabelFrame(self.wind, text = 'Registrar un nuevo usuario')
-        frame.grid(row = 0, column = 0, columnspan = 3, pady = 20)
+        frame.grid(row = 0, column = 0, columnspan = 3, pady = 1)
 
         # RFC de la persona
         Label(frame, text = 'RFC: ').grid(row = 1, column = 0)
@@ -53,7 +53,7 @@ class prestamos:
         ttk.Button(frame, text = 'Guardar Usuario',command=self.subir_datos).grid(row = 6, columnspan = 2, sticky = W + E)
 
         frame2 = LabelFrame(self.wind, text = 'Registrar un nuevo prestamo')
-        frame2.grid(row = 0, column = 5, columnspan = 3, pady = 20)
+        frame2.grid(row = 1, column = 0, columnspan = 3, pady = 1)
 
         Label(frame2, text = 'RFC: ').grid(row = 1, column = 0)
         self.rfcPrestamo = Entry(frame2)
@@ -72,6 +72,17 @@ class prestamos:
         self.intereses.grid(row = 4, column = 1)
 
         ttk.Button(frame2, text = 'Generar Prestamo',command=self.subir_prestamo).grid(row = 5, columnspan = 2, sticky = W + E)
+
+        frame3 = LabelFrame(self.wind, text = 'Tabla de amortizacion')
+        frame3.grid(row = 6, column = 0, columnspan = 3, pady = 20)
+
+        self.tree = ttk.Treeview(frame3, height = 15, columns = ("#0","#1","#2","#3"))
+        self.tree.grid(row = 0, column = 0, columnspan = 2)
+        self.tree.heading("#0", text = "Periodo", anchor = CENTER)
+        self.tree.heading("#1", text = "Cuota", anchor = CENTER)
+        self.tree.heading("#2", text = "Intereses", anchor = CENTER)
+        self.tree.heading("#3", text = "Capital", anchor = CENTER)
+        self.tree.heading("#4", text = "Saldo", anchor = CENTER)
 
     def run_query_add(self,query,parameters = ()):
         MysqlCnx = pymysql.connect(host=self.dbHost,port=self.dbPort,
@@ -129,9 +140,12 @@ class prestamos:
     def subir_prestamo(self):
         try:
             if self.validar_datos_prestamo():
-                query = "INSERT INTO `prestamo` (`rfc`, `monto`, `plazos`, `intereses`) VALUES (%s, %s, %s,%s)"
+                """ query = "INSERT INTO `prestamo` (`rfc`, `monto`, `plazos`, `intereses`) VALUES (%s, %s, %s,%s)"
                 parameters = (self.rfcPrestamo.get(),self.monto.get(),self.plazos.get(),self.intereses.get())
-                self.run_query_add(query,parameters)
+                self.run_query_add(query,parameters) """
+                intereses = float(self.intereses.get())/100
+                self.objTabla=Amortizacion(float(self.monto.get()),int(self.plazos.get()),intereses).amortizacionObj()
+                self.print_table()
                 messagebox.showinfo(message="El prestamo se ha guardado correctamente", title="Exito")
                 self.rfcPrestamo.delete(0, END)
                 self.monto.delete(0, END)
@@ -139,6 +153,45 @@ class prestamos:
                 self.intereses.delete(0, END)
         except:
             messagebox.showinfo(message="Ha ocurrido un error", title="Error")
+
+    def print_table(self):
+        for row in self.objTabla:
+            self.tree.insert('', 0, text = row['Periodo'], values = (row['Cuota'],row['Intereses'],row['Capital'],row['Saldo']))
+
+class Amortizacion:
+    def __init__(self, dinero, periodo, interes):
+        self.dinero = dinero
+        self.periodo = periodo
+        self.interes = interes
+        self.total = dinero * (1 + interes)
+    
+    def get_capital(self):
+        return self.dinero / self.periodo
+    
+    def get_intereses(self):
+        return self.get_capital() * self.interes
+    
+    def get_saldo(self):
+        self.total -= self.get_cuota()
+        return self.total
+    
+    def get_cuota(self):
+        return self.get_capital() + self.get_intereses()
+    
+    def amortizacionObj(self):
+        objeto = []
+        for mes in range(self.periodo):
+            objeto.append(
+                {
+                    'Periodo': mes + 1,
+                    'Cuota': self.get_cuota(),
+                    'Intereses': self.get_intereses(),
+                    'Capital': self.get_capital(),
+                    'Saldo': self.get_saldo()
+                }
+            )
+        objeto = list(reversed(objeto))
+        return objeto
 
 if __name__ == '__main__':
     window = Tk()

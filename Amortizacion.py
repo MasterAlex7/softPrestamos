@@ -1,4 +1,4 @@
-class Amortizacion:
+class AmortizacionDeuda:
     def __init__(self, dinero, periodo, interes):
         self.dinero = dinero
         self.periodo = periodo
@@ -19,7 +19,7 @@ class Amortizacion:
         return round(self.get_capital() + self.get_intereses(),3)
 
 
-Amortizacion = Amortizacion(12000, 9, 0.15)
+Amortizacion = AmortizacionDeuda(12000, 9, 0.15)
 
 objeto = []
 
